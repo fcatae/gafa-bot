@@ -6,20 +6,63 @@ using System.Threading.Tasks;
 
 namespace TaskFlow
 {
+    class RuntimeContext
+    {
+        private TaskCompletionSource<object> _tsc = new TaskCompletionSource<object>();
+
+        string _state = null;
+        bool _hasFinished = false;
+        
+        public void SetState(string state)
+        {
+            this._state = state;
+        }
+
+        public string GetState()
+        {
+            return this._state;
+        }
+
+        public void SetResult(object result)
+        {
+            _tsc.SetResult(result);
+        }
+
+        public Task GetTask()
+        {
+            return this._tsc.Task;
+        }
+
+        public void Continue()
+        {
+        }
+
+        public bool HasFinished => _hasFinished;
+    }
+
     class Runtime
     {
-        public static async Task<string> RunAsync(string objectName, string methodName, params object[] parameters)
+        public static RuntimeContext Start(string objectName, string methodName, params object[] parameters)
+        {
+            var context = new RuntimeContext();
+            var task = StartAsync(context, objectName, methodName, parameters);
+
+            return context;
+        }
+
+        public static async Task StartAsync(RuntimeContext context, string objectName, string methodName, params object[] parameters)
         {
             try
             {
                 await RunObjectMethodAsync(objectName, methodName, parameters);
+
+                context.SetState(null);
+                context.SetResult(true);
             }
             catch (WorkflowInterruptionException ex)
             {
-                return ex.WorkflowState;
+                context.SetState(ex.WorkflowState);
             }
-
-            return null;
         }
 
         public static async Task<string> RunAsync(Func<Task> action)
@@ -42,7 +85,7 @@ namespace TaskFlow
             var instance = Activator.CreateInstance(type);
             var methodInfo = type.GetMethod(methodName);
 
-            return methodInfo.Invoke(instance, parameters) as Task;
+            return (Task)methodInfo.Invoke(instance, parameters);
         }
     }
 }

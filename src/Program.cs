@@ -9,7 +9,16 @@ namespace TaskFlow
 
         static void Main(string[] args)
         {
-            Runtime.RunAsync("TaskFlow.WorkflowImpl1", "Contagem", 0).Wait();                        
+            var ec = Runtime.Start("TaskFlow.WorkflowImpl1", "Contagem", 0);
+
+            ec.GetTask().ContinueWith(t =>
+            {
+                Console.WriteLine("DONE");
+            });
+
+            var state = ec.GetState();
+
+            ec.Continue();
         }
     }
 }
