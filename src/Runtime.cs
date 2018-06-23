@@ -45,7 +45,7 @@ namespace TaskFlow
         public static RuntimeContext Start(string objectName, string methodName, params object[] parameters)
         {
             var context = new RuntimeContext();
-            var task = StartAsync(context, objectName, methodName, parameters);
+            var task = StartAsync(context, objectName, methodName, parameters).ConfigureAwait(false);
 
             return context;
         }

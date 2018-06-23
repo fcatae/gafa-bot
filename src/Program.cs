@@ -19,6 +19,8 @@ namespace TaskFlow
             var state = ec.GetState();
 
             ec.Continue();
+
+            Console.ReadLine();
         }
     }
 }
