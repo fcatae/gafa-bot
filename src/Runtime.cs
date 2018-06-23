@@ -6,46 +6,46 @@ using System.Threading.Tasks;
 
 namespace TaskFlow
 {
-    class RuntimeContext
+    class RuntimeFunctionCall
     {
-        private TaskCompletionSource<object> _tsc = new TaskCompletionSource<object>();
+        readonly string _objectName;
+        readonly string _methodName;
+        readonly object[] _parameters;
 
-        string _state = null;
-        bool _hasFinished = false;
-        
-        public void SetState(string state)
+        public RuntimeFunctionCall(string objectName, string methodName, object[] parameters)
         {
-            this._state = state;
+            this._objectName = objectName;
+            this._methodName = methodName;
+            this._parameters = parameters;
         }
 
-        public string GetState()
+        public object Execute()
         {
-            return this._state;
+            Type type = Type.GetType(_objectName);
+            var instance = Activator.CreateInstance(type);
+            var methodInfo = type.GetMethod(_methodName);
+
+            return methodInfo.Invoke(instance, _parameters);
         }
 
-        public void SetResult(object result)
+        public object Execute(params object[] parameters)
         {
-            _tsc.SetResult(result);
-        }
+            Type type = Type.GetType(_objectName);
+            var instance = Activator.CreateInstance(type);
+            var methodInfo = type.GetMethod(_methodName);
 
-        public Task GetTask()
-        {
-            return this._tsc.Task;
+            return methodInfo.Invoke(instance, parameters);
         }
-
-        public void Continue()
-        {
-        }
-
-        public bool HasFinished => _hasFinished;
     }
 
     class Runtime
     {
         public static RuntimeContext Start(string objectName, string methodName, params object[] parameters)
         {
-            var context = new RuntimeContext();
-            var task = StartAsync(context, objectName, methodName, parameters).ConfigureAwait(false);
+            var funcCall = new RuntimeFunctionCall(objectName, methodName, parameters);
+
+            var context = new RuntimeContext(funcCall);
+            var task = StartAsync(context, objectName, methodName, parameters);
 
             return context;
         }
@@ -54,7 +54,7 @@ namespace TaskFlow
         {
             try
             {
-                await RunObjectMethodAsync(objectName, methodName, parameters);
+                await RunObjectMethodAsync(objectName, methodName, parameters).ConfigureAwait(false);
 
                 context.SetState(null);
                 context.SetResult(true);
@@ -62,10 +62,11 @@ namespace TaskFlow
             catch (WorkflowInterruptionException ex)
             {
                 context.SetState(ex.WorkflowState);
+                context.SetPauseState();
             }
         }
 
-        public static async Task<string> RunAsync(Func<Task> action)
+        static async Task<RuntimeContext.WorkflowState> RunAsync(Func<Task> action)
         {
             try
             {

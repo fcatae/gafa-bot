@@ -19,8 +19,10 @@ namespace TaskFlow
             });
                         
             var state = ec.GetState();
+            bool hasFinished = ec.HasFinished();
+            bool isRunning = ec.IsRunning();
 
-            while(state != null)
+            while (state != null)
             {
                 Console.WriteLine("WorkflowInterruption: " + state);
                 ec.Continue();

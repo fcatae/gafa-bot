@@ -6,21 +6,10 @@ using System.Threading.Tasks;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Diagnostics;
 
 namespace TaskFlow
 {
-    class WorkflowInterruptionException : Exception
-    {
-        string _state;
-
-        public WorkflowInterruptionException(string state)
-        {
-            _state = state;
-        }
-
-        public string WorkflowState => _state;
-    }
-
     abstract class Workflow
     {
         WorkspaceScopeList _scopes = new WorkspaceScopeList();
@@ -36,34 +25,24 @@ namespace TaskFlow
 
         protected void Code(string name, Action action)
         {
-            var info = RetrieveScopeInformation(name);
+            var initialScope = _scopes.Clone();
 
             try
             {
                 action();
             }
             catch(InjectFailureException)
-            {                
-                throw new WorkflowInterruptionException(info);
+            {
+                var state = new RuntimeContext.WorkflowState(name, initialScope);
+                throw new WorkflowInterruptionException(state);
             }            
-        }
-
-        private string RetrieveScopeInformation(string name)
-        {
-            string text = WorkspaceScopeList.Serialize(_scopes);
-
-            string msg = $"{name},{text}";
-
-            var list = WorkspaceScopeList.Deserialize(text);
-
-            return msg;
         }
     }
 
     class WorkspaceScopeList
     {
         List<WorkspaceScope> _scopes = new List<WorkspaceScope>();
-
+        
         public void Add(WorkspaceScope scope)
         {
             _scopes.Add(scope);
@@ -97,6 +76,18 @@ namespace TaskFlow
             return scopeList;
         }
 
+        public WorkspaceScopeList Clone()
+        {
+            var clone = new WorkspaceScopeList();
+
+            foreach(var scope in this._scopes)
+            {
+                clone.Add(scope.Clone());
+            }
+
+            return clone;
+        }
+
         class WorkspaceScopeGeneric
         {
             public string Name { get; set; }
@@ -110,6 +101,16 @@ namespace TaskFlow
         public string Name { get; set; }
         public string TypeName { get; set; }
         public ScopeVariables Variables { get; set; }
+
+        public WorkspaceScope Clone()
+        {
+            return new WorkspaceScope
+            {
+                Name = Name,
+                TypeName = TypeName,
+                Variables = Variables.Clone()
+            };
+        }
     }
 
     abstract class ScopeVariables : IDisposable
@@ -138,6 +139,11 @@ namespace TaskFlow
             }
             
             return (T)instance;
+        }
+
+        public ScopeVariables Clone()
+        {
+            return (ScopeVariables)this.MemberwiseClone();
         }
 
         public void Dispose()
