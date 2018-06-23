@@ -11,7 +11,11 @@ namespace TaskFlow
         {
             var wf1 = new WorkflowImpl1();
 
-            wf1.Contagem(0).Wait();
+            Workflow.RunAsync(async () =>
+            {
+                await wf1.Contagem(0);
+            }).Wait();
+            
         }
     }
 }

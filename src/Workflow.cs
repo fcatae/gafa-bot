@@ -17,6 +17,8 @@ namespace TaskFlow
         {
             _state = state;
         }
+
+        public string WorkflowState => _state;
     }
 
     abstract class Workflow
@@ -33,14 +35,15 @@ namespace TaskFlow
         }
 
         protected void Code(string name, Action action)
-        {            
+        {
+            var info = RetrieveScopeInformation(name);
+
             try
             {
                 action();
             }
-            catch(InjectFailureException ex)
-            {
-                var info = RetrieveScopeInformation(name);
+            catch(InjectFailureException)
+            {                
                 throw new WorkflowInterruptionException(info);
             }            
         }
@@ -54,6 +57,21 @@ namespace TaskFlow
             var list = WorkspaceScopeList.Deserialize(text);
 
             return msg;
+        }
+
+        public static async Task<string> RunAsync(Func<Task> action)
+        {
+            try
+            {
+                await action();
+            }
+            catch(WorkflowInterruptionException ex)
+            {
+                return ex.WorkflowState;
+            }
+            
+            
+            return null;
         }
     }
 
