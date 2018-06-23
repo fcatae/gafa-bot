@@ -9,6 +9,16 @@ using Newtonsoft.Json.Linq;
 
 namespace TaskFlow
 {
+    class WorkflowInterruptionException : Exception
+    {
+        string _state;
+
+        public WorkflowInterruptionException(string state)
+        {
+            _state = state;
+        }
+    }
+
     abstract class Workflow
     {
         WorkspaceScopeList _scopes = new WorkspaceScopeList();
@@ -23,20 +33,27 @@ namespace TaskFlow
         }
 
         protected void Code(string name, Action action)
-        {
-            RetrieveScopeInformation(name);            
-            action();
+        {            
+            try
+            {
+                action();
+            }
+            catch(InjectFailureException ex)
+            {
+                var info = RetrieveScopeInformation(name);
+                throw new WorkflowInterruptionException(info);
+            }            
         }
 
-        private void RetrieveScopeInformation(string name)
+        private string RetrieveScopeInformation(string name)
         {
             string text = WorkspaceScopeList.Serialize(_scopes);
 
-            string msg = $"Step: {name} - {text}";
+            string msg = $"{name},{text}";
 
             var list = WorkspaceScopeList.Deserialize(text);
 
-            Console.WriteLine(msg);  
+            return msg;
         }
     }
 

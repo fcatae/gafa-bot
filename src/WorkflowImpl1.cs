@@ -1,10 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace TaskFlow
 {
+    class InjectFailureException : Exception
+    {
+        static Random _rnd = new Random();
+
+        [DebuggerHidden]
+        public static void ThrowRate(int rate)
+        {
+            int probability = _rnd.Next(0, 100);
+
+            if( probability > rate )
+            {
+                throw new InjectFailureException();
+            }
+        }
+    }
+
     class ScopeVar1 : ScopeVariables
     {
         public int i;
@@ -43,6 +60,7 @@ namespace TaskFlow
                     {
                         Code("list2-botsend", () =>
                         {
+                            InjectFailureException.ThrowRate(50);
                             bot.Send("Hello " + scope.i);
                             scope.i++;
                         });
