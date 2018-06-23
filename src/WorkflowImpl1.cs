@@ -13,7 +13,6 @@ namespace TaskFlow
 
     class WorkflowImpl1 : Workflow
     {
-
         public async Task Contagem(int i)
         {
             using (var scope = await ScopeAsync<ScopeVar1>("contagem"))

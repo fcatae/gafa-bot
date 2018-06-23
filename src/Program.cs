@@ -9,18 +9,27 @@ namespace TaskFlow
 
         static void Main(string[] args)
         {
+            BotHub.StartConversationHub();
+
             var ec = Runtime.Start("TaskFlow.WorkflowImpl1", "Contagem", 0);
 
             ec.GetTask().ContinueWith(t =>
             {
                 Console.WriteLine("DONE");
             });
-
+                        
             var state = ec.GetState();
 
-            ec.Continue();
+            while(state != null)
+            {
+                Console.WriteLine("WorkflowInterruption: " + state);
+                ec.Continue();
+                Task.Delay(10000).Wait();
 
-            Console.ReadLine();
+                state = ec.GetState();
+            }
+
+            
         }
     }
 }
