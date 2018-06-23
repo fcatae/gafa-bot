@@ -58,21 +58,6 @@ namespace TaskFlow
 
             return msg;
         }
-
-        public static async Task<string> RunAsync(Func<Task> action)
-        {
-            try
-            {
-                await action();
-            }
-            catch(WorkflowInterruptionException ex)
-            {
-                return ex.WorkflowState;
-            }
-            
-            
-            return null;
-        }
     }
 
     class WorkspaceScopeList

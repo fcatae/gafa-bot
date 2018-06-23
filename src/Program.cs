@@ -9,13 +9,7 @@ namespace TaskFlow
 
         static void Main(string[] args)
         {
-            var wf1 = new WorkflowImpl1();
-
-            Workflow.RunAsync(async () =>
-            {
-                await wf1.Contagem(0);
-            }).Wait();
-            
+            Runtime.RunAsync("TaskFlow.WorkflowImpl1", "Contagem", 0).Wait();                        
         }
     }
 }
