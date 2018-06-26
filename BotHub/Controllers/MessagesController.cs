@@ -11,19 +11,13 @@ namespace BotHub.Controllers
     public class MessagesController : Controller
     {
         [HttpPost]
-        public void Post([FromBody]Activity activity)
+        public void Post([FromBody]Activity activity, [FromServices]BotHub bothub)
         {
             var message = activity.AsMessageActivity();
 
             if( message != null )
             {
-                string text = activity.Text;
-
-                var client = new ConnectorClient(new Uri(activity.ServiceUrl));
-
-                var reply = activity.CreateReply("hello! " + text);
-
-                client.Conversations.ReplyToActivity(reply);
+                bothub.Receive(activity);
             }
 
         }
