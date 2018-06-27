@@ -97,7 +97,8 @@ namespace BotHub
             public void RestoreFields(IAsyncStateMachine stateMachine)
             {
                 var fs =_allFields
-                    .Where(fld => fld.Name.StartsWith("<>u__1"))
+                    //.Where(fld => fld.Name.StartsWith("<>u__"))
+                    .Where(fld => fld.FieldType == typeof(System.Runtime.CompilerServices.TaskAwaiter))
                     .Select(fld => {
                         var t = Task.CompletedTask.GetAwaiter();
                         fld.SetValue(stateMachine, t); return t;
@@ -128,7 +129,7 @@ namespace BotHub
         {
             _definition.RestoreFields(_state);
 
-            var task = _definition.RunStepAsync(_state, 0);
+            var task = _definition.RunStepAsync(_state, -1);
 
             return task;
         }

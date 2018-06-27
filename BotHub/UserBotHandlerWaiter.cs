@@ -81,6 +81,13 @@ namespace BotHub
             return b.Task;
         }
 
+        UserAwaitable Checkpoint()
+        {
+            var ua = new UserAwaitable(_f);
+
+            return ua;
+        }
+
         async Task User(string name)
         {
             _f.Suspend();
@@ -103,7 +110,18 @@ namespace BotHub
         public async Task BotConversation(string id)
         {
             Console.WriteLine($"({id}) Started");
-            await User("intro");
+
+            await Checkpoint();
+            await Checkpoint();
+            await Checkpoint();
+            await User("check1");
+            await User("check2");
+            await User("check3");
+
+            Console.WriteLine($"...");
+
+            await User("a");
+
             Console.WriteLine($"({id}) Ended");
         }
 
