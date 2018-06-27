@@ -14,6 +14,10 @@ namespace BotHub
             bot = proxy;
         }
 
+        void digiteUmNumero()
+        {
+        }
+
         public async Task RunAsync(string id)
         {
             for(int i=0; ;i++)
@@ -21,6 +25,8 @@ namespace BotHub
                 Console.WriteLine($"({id}) ... {i}");
 
                 bot.Say($"({id}) Running... {i}");
+
+                await bot.Read();
 
                 await Task.Delay(1000);
             }

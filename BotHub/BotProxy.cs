@@ -20,5 +20,11 @@ namespace BotHub
         {
             _send.Send(new BotMessage { Body = message });
         }
+
+        public async Task<string> Read()
+        {
+            var message = await _receive.DequeueAsync();
+            return message.Body;
+        }
     }
 }
