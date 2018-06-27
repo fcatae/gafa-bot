@@ -35,6 +35,9 @@ namespace BotHub
         BotHubRoute CreateRoute(string id, Activity activity)
         {
             var route = new BotHubRoute(activity);
+            var activator = new UserActivator(id, route.GetBotQueue(), route.GetBotPostBack());
+            activator.Start();
+
             _routes[id] = route;
             return route;
         }

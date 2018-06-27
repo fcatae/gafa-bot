@@ -19,6 +19,9 @@ namespace BotHub
         private readonly BotPostBack _botPostBack;
         private readonly BotQueue _queue;
 
+        public BotPostBack GetBotPostBack() => _botPostBack;
+        public BotQueue GetBotQueue() => _queue;
+
         public BotHubRoute(Activity activity)
         {
             _channelId = activity.ChannelId;
