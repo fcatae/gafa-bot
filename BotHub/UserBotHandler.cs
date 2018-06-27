@@ -14,8 +14,15 @@ namespace BotHub
             bot = proxy;
         }
 
-        void digiteUmNumero()
+        Nullable<int> DigiteUmNumero(string input)
         {
+            if (Int32.TryParse(input, out int result))
+            {
+                return result;
+            }
+
+            bot.Say("Digite um número");
+            return null;
         }
 
         public async Task RunAsync(string id)
@@ -24,9 +31,9 @@ namespace BotHub
             {
                 Console.WriteLine($"({id}) ... {i}");
 
-                bot.Say($"({id}) Running... {i}");
+                bot.Say($"Running... {i}");
 
-                await bot.Read();
+                int? digi = await bot.Read(DigiteUmNumero);
 
                 await Task.Delay(1000);
             }

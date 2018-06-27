@@ -26,5 +26,19 @@ namespace BotHub
             var message = await _receive.DequeueAsync();
             return message.Body;
         }
+
+        public async Task<T> Read<T>(Func<string,T> filter)
+        {
+            while(true)
+            {
+                var message = await _receive.DequeueAsync();
+                string text = message.Body;
+                T result = filter(text);
+
+                if (result != null)
+                    return result;
+            }
+        }
+
     }
 }
