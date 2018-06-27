@@ -16,6 +16,9 @@ namespace BotHub
         private readonly string _locale;
         private readonly ChannelAccount _botAccount;
 
+        private readonly BotPostBack _botPostBack;
+        private readonly BotQueue _queue;
+
         public BotHubRoute(Activity activity)
         {
             _channelId = activity.ChannelId;
@@ -25,12 +28,13 @@ namespace BotHub
 
             _locale = activity.Locale;
             _botAccount = activity.Recipient;
+
+            _botPostBack = new BotPostBack(this);
+            _queue = new BotQueue();
         }
 
-        public void Send(string text)
+        Activity CreateMessage(string text)
         {
-            var client = new ConnectorClient(_serviceUri);
-
             var reply = Activity.CreateMessageActivity();
 
             reply.Timestamp = DateTimeOffset.UtcNow;
@@ -41,14 +45,25 @@ namespace BotHub
             reply.From = _botAccount;
             reply.Text = text;
 
-            client.Conversations.SendToConversation(_conversationId, (Activity)reply);
+            return (Activity)reply;
+        }
+
+        public void Send(string text)
+        {
+            var reply = CreateMessage(text);
+
+            var client = new ConnectorClient(_serviceUri);
+
+            client.Conversations.SendToConversation(_conversationId, reply);
         }
 
         public void Enqueue(Activity activity)
         {
             var text = activity.Text;
 
-            this.Send("OK " + text);
-        }
+            var message = new BotMessage { Body = text };
+
+            _queue.Enqueue(message);
+        }        
     }
 }
