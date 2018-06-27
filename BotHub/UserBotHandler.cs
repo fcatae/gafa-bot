@@ -37,23 +37,6 @@ namespace BotHub
             return null;
         }
 
-        public Task RunAsync(string id)
-        {
-            var a = new TaskInspector();
-            a.Run<UserBotHandler>("RunStaticAsync");
-            return null;
-        }
-
-        static public async Task RunStaticAsync(string id)
-        {
-            Console.WriteLine($"({id}) Started");
-            await Task.Delay(1);
-            Console.WriteLine($"({id}) ..");
-            await Task.Delay(1);
-            Console.WriteLine($"({id}) End");
-            await Task.Delay(1);
-        }
-
         public async Task Run2Async(string id)
         {
             Console.WriteLine($"({id}) Started");

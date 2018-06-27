@@ -40,10 +40,14 @@ namespace BotHub
             return null;
         }
 
-        public Task RunAsync(string id)
+        DurableFunction _f;
+
+        public async Task RunAsync(string id)
         {
-            var t = Run<UserBotHandlerWaiter>("BotConversation");
-            return null;
+            _f = DurableFunction.Create(typeof(UserBotHandlerWaiter), "BotConversation", this);
+
+            await _f.StartAsync();
+            //await _f.StartAsync();
         }
 
         public Task Run<T>(string methodName)
@@ -77,12 +81,33 @@ namespace BotHub
             return b.Task;
         }
 
-        Task User(string name)
+        async Task User(string name)
         {
-            return bot.Read();
+            _f.Suspend();
+
+            await bot.Read();
+
+            _f.Resume();
+        }
+
+        private async Task BotConversationPrivc(string id)
+        {
+            await Task.Delay(1);
+        }
+
+        static public async Task BotConversationStatc(string id)
+        {
+            await Task.Delay(1);
         }
 
         public async Task BotConversation(string id)
+        {
+            Console.WriteLine($"({id}) Started");
+            await User("intro");
+            Console.WriteLine($"({id}) Ended");
+        }
+
+        public async Task BotConversation2(string id)
         {
             Console.WriteLine($"({id}) Started");
 

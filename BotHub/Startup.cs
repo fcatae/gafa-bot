@@ -37,9 +37,6 @@ namespace BotHub
             }
 
             app.UseMvc();
-
-            var taskInspector = new TaskInspector();
-            taskInspector.Scan();
         }
     }
 }
