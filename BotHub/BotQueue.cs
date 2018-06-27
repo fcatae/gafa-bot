@@ -45,6 +45,17 @@ namespace BotHub
             }
         }  
         
+        public void Clear()
+        {
+            lock (_queue)
+            {
+                if (_pending.Count == 0)
+                {
+                    _queue.Clear();
+                }
+            }
+        }
+
         Task<BotMessage> CreatePendingDequeue()
         {
             var tsc = new TaskCompletionSource<BotMessage>();
