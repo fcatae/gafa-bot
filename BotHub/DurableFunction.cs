@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -15,6 +16,7 @@ namespace BotHub
             readonly FieldInfo _fieldBuilder;
             readonly FieldInfo _fieldThis;
             readonly FieldInfo _fieldState;
+            readonly FieldInfo _fieldAwaiter;
             readonly FieldInfo[] _fieldLocals;
             readonly FieldInfo[] _allFields;
             readonly object _thisPointer;
@@ -34,9 +36,14 @@ namespace BotHub
                 _fieldThis = stateType.GetField("<>4__this");
 
                 // All fields
-                _fieldLocals = stateType.GetRuntimeFields().Where(SelectOnlyNamedVariables).ToArray();
                 _allFields = stateType.GetRuntimeFields().ToArray();
 
+                // Generic Awaiter
+                _fieldAwaiter = stateType.GetRuntimeFields().Where(FindGenericAwaiter).First();
+
+                // All local variables
+                _fieldLocals = stateType.GetRuntimeFields().Where(SelectOnlyNamedVariables).ToArray();
+                
                 _thisPointer = thisPointer;
             }
             
@@ -68,6 +75,7 @@ namespace BotHub
                 _fieldBuilder.SetValue(stateMachine, builder);
                 _fieldState.SetValue(stateMachine, step);
                 _fieldThis.SetValue(stateMachine, _thisPointer);
+                _fieldAwaiter.SetValue(stateMachine, CheckpointAwaiter.Completed);
 
                 builder.Start(ref stateMachine);
 
@@ -77,6 +85,11 @@ namespace BotHub
             bool SelectOnlyNamedVariables(FieldInfo fld)
             {
                 return (fld.Name.Length > 2 && fld.Name[0] == '<' && fld.Name[1] != '>');
+            }
+
+            bool FindGenericAwaiter(FieldInfo fld)
+            {
+                return (fld.Name.StartsWith("<>u__") && fld.FieldType == typeof(System.Object));
             }
 
             public int GetState(IAsyncStateMachine stateMachine)
@@ -93,19 +106,6 @@ namespace BotHub
             {
                 return _allFields.Select(fld => fld.GetValue(stateMachine)).ToArray();
             }
-
-            public void RestoreFields(IAsyncStateMachine stateMachine)
-            {
-                var fs =_allFields
-                    //.Where(fld => fld.Name.StartsWith("<>u__"))
-                    .Where(fld => fld.FieldType == typeof(System.Runtime.CompilerServices.TaskAwaiter))
-                    .Select(fld => {
-                        var t = Task.CompletedTask.GetAwaiter();
-                        fld.SetValue(stateMachine, t); return t;
-                    })
-                    .ToArray();
-            }
-            
         }
 
         Definition _definition;
@@ -127,23 +127,20 @@ namespace BotHub
 
         public Task StartAsync()
         {
-            _definition.RestoreFields(_state);
-
             var task = _definition.RunStepAsync(_state, -1);
 
             return task;
         }
         
-        void RestoreTaskAwaiter(IAsyncStateMachine state)
-        {
-            _definition.RestoreFields(_state);
-        }
-
         public void Suspend()
         {
             var stt0 = _definition.GetState(_state);
             var vars = _definition.GetLocalVariables(_state);
             var al99 = _definition.GetAllFields(_state);
+
+            Console.WriteLine($"Current state = {stt0}");
+            Console.WriteLine(JsonConvert.SerializeObject(vars));
+            Console.WriteLine();
         }
 
         public void Resume()
