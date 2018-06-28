@@ -18,9 +18,10 @@ namespace BotHub
 
         public void Start()
         {
-            var handler = new UserBotHandlerWaiter(_proxy);
+            var handler = new UserBotHandlerWaiter();
+            handler.CreateBot(_proxy);
 
-            Task.Run(() => handler.RunAsync(_id));            
+            Task.Run(() => handler.StartAsync());            
         }
     }
 }

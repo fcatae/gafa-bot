@@ -16,26 +16,28 @@ namespace BotHub
             _send = send;
         }
 
+        public void Typing()
+        { 
+        }
+
         public void Say(string message)
         {
             _send.Send(new BotMessage { Body = message });
         }
 
-        public void Zero()
+        public void ClearInput()
         {
             _receive.Clear();
         }
 
         public async Task<string> Read()
         {
-            Zero();
             var message = await _receive.DequeueAsync();
             return message.Body;
         }
 
         public async Task<T> Read<T>(Func<string,T> filter)
         {
-            Zero();
             while (true)
             {
                 var message = await _receive.DequeueAsync();
