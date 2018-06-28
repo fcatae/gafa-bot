@@ -75,7 +75,7 @@ namespace BotHub
                 _fieldBuilder.SetValue(stateMachine, builder);
                 _fieldState.SetValue(stateMachine, step);
                 _fieldThis.SetValue(stateMachine, _thisPointer);
-                _fieldAwaiter.SetValue(stateMachine, CheckpointAwaiter.Completed);
+                _fieldAwaiter.SetValue(stateMachine, DurableFunctionCheckpoint.Completed);
 
                 builder.Start(ref stateMachine);
 

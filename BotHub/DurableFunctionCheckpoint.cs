@@ -7,19 +7,19 @@ using System.Threading.Tasks;
 
 namespace BotHub
 {
-    public class CheckpointAwaiter : ICriticalNotifyCompletion
+    public class DurableFunctionCheckpoint : ICriticalNotifyCompletion
     {
         private string _name;
         private DurableFunction _function;
 
-        public static CheckpointAwaiter Completed = new CheckpointAwaiter("UserAwaitable.Completed", null);
+        public static DurableFunctionCheckpoint Completed = new DurableFunctionCheckpoint("UserAwaitable.Completed", null);
 
-        private CheckpointAwaiter()
+        private DurableFunctionCheckpoint()
         {
             this.IsCompleted = true;
         }
 
-        public CheckpointAwaiter(string name, DurableFunction durableFunction)
+        public DurableFunctionCheckpoint(string name, DurableFunction durableFunction)
         {
             this._name = name;
             this._function = durableFunction;
@@ -42,7 +42,7 @@ namespace BotHub
             Task.Run(continuation);
         }
 
-        public CheckpointAwaiter GetAwaiter()
+        public DurableFunctionCheckpoint GetAwaiter()
         {
             return this;
         }

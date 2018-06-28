@@ -27,9 +27,9 @@ namespace BotHub
             await _durableFunction.StartAsync();
         }
 
-        public CheckpointAwaiter Checkpoint(string name)
+        public DurableFunctionCheckpoint Checkpoint(string name)
         {
-            return new CheckpointAwaiter(name, _durableFunction);
+            return new DurableFunctionCheckpoint(name, _durableFunction);
         }
     }
 }
