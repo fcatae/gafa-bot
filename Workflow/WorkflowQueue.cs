@@ -6,17 +6,27 @@ namespace Workflow
 {
     class WorkflowQueue : IWorkflowQueue
     {
-        Queue<WorkflowMessage> _queue = new Queue<WorkflowMessage>();
+        Queue<string> _queue = new Queue<string>();
+        int _idGenerator = 0;
 
         public void Enqueue(WorkflowMessage message)
         {
-            _queue.Enqueue(message);
+            _queue.Enqueue(message.GetContent());
         }
 
         public WorkflowMessage Dequeue()
         {
-            _queue.TryDequeue(out var message);
-            return message;
+            if(_queue.TryDequeue(out string content))
+            {
+                return WorkflowMessage.CreateFrom(GetId(), content, null);
+            }
+
+            return null;
+        }
+
+        string GetId()
+        {
+            return "TEST" + (_idGenerator++).ToString();
         }
     }
 }

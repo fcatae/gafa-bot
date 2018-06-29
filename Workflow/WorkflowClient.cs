@@ -15,7 +15,7 @@ namespace Workflow
 
         public void Start(string module, string method, object parameter)
         {
-            var message = new WorkflowMessage(module, method, parameter);
+            var message = WorkflowMessage.CreateCall(module, method, parameter);
             _queue.Enqueue(message);
         }
     }
