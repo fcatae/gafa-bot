@@ -24,7 +24,7 @@ namespace Workflow
             if (queueMessage == null)
                 return null;
 
-            return WorkflowMessage.CreateFrom(queueMessage.Id, queueMessage.AsString, queueMessage.PopReceipt);
+            return WorkflowMessage.CreateFrom(this, queueMessage.Id, queueMessage.AsString, queueMessage.PopReceipt);
         }
 
         public void Enqueue(WorkflowMessage message)

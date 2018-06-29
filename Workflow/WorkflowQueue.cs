@@ -18,7 +18,7 @@ namespace Workflow
         {
             if(_queue.TryDequeue(out string content))
             {
-                return WorkflowMessage.CreateFrom(GetId(), content, null);
+                return WorkflowMessage.CreateFrom(this, GetId(), content, null);
             }
 
             return null;
