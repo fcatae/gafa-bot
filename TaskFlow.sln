@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskFlow", "src\TaskFlow.cs
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotHub", "BotHub\BotHub.csproj", "{96E0371B-AF71-4288-9646-1B9270D71FE9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workflow", "Workflow\Workflow.csproj", "{185B964E-CB1D-41CA-ADE2-DFAFEBC35F7E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{96E0371B-AF71-4288-9646-1B9270D71FE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96E0371B-AF71-4288-9646-1B9270D71FE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96E0371B-AF71-4288-9646-1B9270D71FE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{185B964E-CB1D-41CA-ADE2-DFAFEBC35F7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{185B964E-CB1D-41CA-ADE2-DFAFEBC35F7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{185B964E-CB1D-41CA-ADE2-DFAFEBC35F7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{185B964E-CB1D-41CA-ADE2-DFAFEBC35F7E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
