@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Workflow
 {
-    class WorkflowQueue
+    class WorkflowQueue : IWorkflowQueue
     {
         Queue<WorkflowMessage> _queue = new Queue<WorkflowMessage>();
 

@@ -6,7 +6,16 @@ namespace Workflow
 {
     class Workflow
     {
-        WorkflowQueue _queue = new WorkflowQueue();
+        IWorkflowQueue _queue;
+
+        public Workflow() : this(new WorkflowQueue())
+        {
+        }
+
+        public Workflow(IWorkflowQueue queue)
+        {
+            _queue = queue;
+        }
 
         public WorkflowClient GetClient()
         {

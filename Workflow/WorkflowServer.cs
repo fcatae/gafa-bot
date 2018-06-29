@@ -7,9 +7,9 @@ namespace Workflow
 {
     class WorkflowServer
     {
-        readonly WorkflowQueue _queue;
+        readonly IWorkflowQueue _queue;
 
-        public WorkflowServer(WorkflowQueue queue)
+        public WorkflowServer(IWorkflowQueue queue)
         {
             _queue = queue;
         }
