@@ -8,6 +8,7 @@ namespace Workflow
     {
         void Enqueue(WorkflowMessage message);
         WorkflowMessage Dequeue();
+        void UpdateTimeout(WorkflowMessage message, int timeout);
         void Complete(WorkflowMessage message);
     }
 }

@@ -24,6 +24,11 @@ namespace Workflow
             return null;
         }
 
+        public void UpdateTimeout(WorkflowMessage message, int timeout)
+        {
+            // ignore
+        }
+
         public void Complete(WorkflowMessage message)
         {
             // ignore

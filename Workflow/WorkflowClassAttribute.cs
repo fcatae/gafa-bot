@@ -6,5 +6,11 @@ namespace Workflow
 {
     class WorkflowClassAttribute : Attribute
     {
+        public readonly int Timeout;
+
+        public WorkflowClassAttribute(int timeout = 5)
+        {
+            this.Timeout = timeout;
+        }
     }
 }

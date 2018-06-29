@@ -23,7 +23,6 @@ namespace Workflow
                 try
                 {
                     ProcessMessage(message);
-                    _queue.Complete(message);
                 }
                 catch(Exception ex)
                 {
@@ -39,7 +38,21 @@ namespace Workflow
             if (message == null)
                 throw new ArgumentNullException(nameof(message));
 
+            int timeout = GetModuleTimeout(message.Module);
+
+            message.UpdateTimeout(timeout);
+
             RunLocal(message.Module, message.Method, message.Parameter);
+
+            message.Complete();
+        }
+
+        int GetModuleTimeout(string typeName)
+        {
+            var type = Type.GetType(typeName);
+            int timeout = type.GetCustomAttribute<WorkflowClassAttribute>().Timeout;
+
+            return timeout;
         }
 
         void RunLocal(string typeName, string methodName, object parameter)

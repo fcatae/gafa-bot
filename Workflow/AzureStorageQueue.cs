@@ -17,7 +17,9 @@ namespace Workflow
 
         public WorkflowMessage Dequeue()
         {
-            var queueMessage = _queue.GetMessageAsync().Result;
+            TimeSpan visibility = TimeSpan.FromSeconds(5);
+
+            var queueMessage = _queue.GetMessageAsync(visibility, null, null).Result;
 
             if (queueMessage == null)
                 return null;
@@ -29,6 +31,14 @@ namespace Workflow
         {
             var queueMessage = new CloudQueueMessage(message.GetContent());
             _queue.AddMessageAsync(queueMessage).Wait();
+        }
+
+        public void UpdateTimeout(WorkflowMessage message, int timeout)
+        {
+            var cloudMessage = new CloudQueueMessage(message.Id, message.ReceiptId);
+            var visibilityTimeout = TimeSpan.FromSeconds(timeout);
+
+            _queue.UpdateMessageAsync(cloudMessage, visibilityTimeout, MessageUpdateFields.Visibility).Wait();
         }
 
         public void Complete(WorkflowMessage message)
