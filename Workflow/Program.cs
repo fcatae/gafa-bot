@@ -6,7 +6,14 @@ namespace Workflow
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var workflow = new Workflow();
+
+            var client = workflow.GetClient();
+            var server = workflow.GetServer();
+
+            client.Start("Workflow.HelloWorld", "Run", "Hello World");
+
+            server.DoEventLoop();
         }
     }
 }

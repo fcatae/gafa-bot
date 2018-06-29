@@ -6,14 +6,16 @@ namespace Workflow
 {
     class Workflow
     {
+        WorkflowQueue _queue = new WorkflowQueue();
+
         public WorkflowClient GetClient()
         {
-            return new WorkflowClient();
+            return new WorkflowClient(_queue);
         }
 
         public WorkflowServer GetServer()
         {
-            return new WorkflowServer();
+            return new WorkflowServer(_queue);
         }
     }
 }
