@@ -20,8 +20,15 @@ namespace Workflow
 
             while(message != null)
             {
-                ProcessMessage(message);
-                _queue.Complete(message);
+                try
+                {
+                    ProcessMessage(message);
+                    _queue.Complete(message);
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
 
                 message = _queue.Dequeue();
             }

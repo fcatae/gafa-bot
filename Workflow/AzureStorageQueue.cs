@@ -8,14 +8,11 @@ namespace Workflow
 {
     class AzureStorageQueue : IWorkflowQueue
     {
-        CloudQueueClient _client;
         CloudQueue _queue;
 
-        public AzureStorageQueue()
+        public AzureStorageQueue(CloudQueue queue)
         {
-            _client = CloudStorageAccount.DevelopmentStorageAccount.CreateCloudQueueClient();
-            _queue = _client.GetQueueReference("workflow");
-            _queue.CreateIfNotExistsAsync().Wait();
+            _queue = queue;
         }
 
         public WorkflowMessage Dequeue()
