@@ -6,7 +6,8 @@ namespace Workflow
     {
         static void Main(string[] args)
         {
-            var workflow = new Workflow();
+            var azQueue = new AzureStorageQueue();
+            var workflow = new Workflow(azQueue);
 
             var client = workflow.GetClient();
             var server = workflow.GetServer();

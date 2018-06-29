@@ -21,6 +21,8 @@ namespace Workflow
             while(message != null)
             {
                 ProcessMessage(message);
+                _queue.Complete(message);
+
                 message = _queue.Dequeue();
             }
         }

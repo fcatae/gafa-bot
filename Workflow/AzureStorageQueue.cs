@@ -33,5 +33,10 @@ namespace Workflow
             var queueMessage = new CloudQueueMessage(message.GetContent());
             _queue.AddMessageAsync(queueMessage).Wait();
         }
+
+        public void Complete(WorkflowMessage message)
+        {
+            _queue.DeleteMessageAsync(message.Id, message.ReceiptId).Wait();
+        }
     }
 }

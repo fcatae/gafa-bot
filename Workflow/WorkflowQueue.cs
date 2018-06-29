@@ -24,6 +24,11 @@ namespace Workflow
             return null;
         }
 
+        public void Complete(WorkflowMessage message)
+        {
+            // ignore
+        }
+
         string GetId()
         {
             return "TEST" + (_idGenerator++).ToString();
