@@ -39,7 +39,17 @@ namespace Workflow
             var method = type.GetMethod(methodName);
             var instance = Activator.CreateInstance(type);
 
+            CheckTypeSecurity(type);
+
             method.Invoke(instance, new object[] { parameter });
+        }
+
+        void CheckTypeSecurity(Type type)
+        {
+            if(type.GetCustomAttribute<WorkflowClassAttribute>() == null)
+            {
+                throw new InvalidOperationException($"Class {type.FullName} does not have WorkflowClassAttribute");
+            }
         }
     }
 }
