@@ -9,7 +9,69 @@ namespace BotHub
 {
     class UserBotHandler : BotConversation
     {
-        public async Task Dialog()
+        void Dialog(string name, Func<Task> action)
+        {
+        }
+
+        Task UserIdle(object trigger)
+        {
+            return null;
+        }
+
+        Task<T> UserDelay<T>(Task<T> task)
+        {
+            return task;
+        }
+
+        Task<string> UserResponse()
+        {
+            return null;
+        }
+
+        Task<string> UserResponse<T>(Func<string, T> filter)
+        {
+            return null;
+        }
+
+        public async Task Dialog1()
+        {
+            string id = "1";
+
+
+            Console.WriteLine($"({id}) Started");
+
+            string nome = null;
+            bool? resp = null;
+
+            Dialog("intro", async () =>
+            {
+                bot.Say($"Qual é seu nome?");
+
+                nome = await bot.Read();
+            });
+
+            Dialog("intro", async () =>
+            {
+                bot.Say($"Olá {nome}, eu sou o bot.");
+                bot.Say($"Você sabe programar?");
+
+                resp = await UserDelay(bot.Read(SimOuNao));
+            });
+
+            bot.Say($"Qual é seu nome?");
+
+            await UserIdle(bot);
+
+            nome = await bot.Read();
+
+            bot.Say($"Olá {nome}, eu sou o bot.");
+            bot.Say($"Você sabe programar?");
+
+            var respsn = await UserResponse(SimOuNao);
+
+        }
+
+        public async Task Exemplo()
         {
             string id = "1";
 
