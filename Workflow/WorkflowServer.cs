@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 
 namespace Workflow
@@ -29,7 +30,16 @@ namespace Workflow
             if (message == null)
                 throw new ArgumentNullException(nameof(message));
 
-            Console.WriteLine(message.Module + ":" + message.Method);
+            RunLocal(message.Module, message.Method, message.Parameter);
+        }
+
+        void RunLocal(string typeName, string methodName, object parameter)
+        {
+            var type = Type.GetType(typeName);
+            var method = type.GetMethod(methodName);
+            var instance = Activator.CreateInstance(type);
+
+            method.Invoke(instance, new object[] { parameter });
         }
     }
 }
